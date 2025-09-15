@@ -1,0 +1,52 @@
+% 9/12/25
+% BME444HW1.m
+%
+% Solves system of equations to find internal and external forces knee
+% system
+
+close all
+clear
+clc
+
+%% Declarations
+m = 64;  % body mass, kg
+Lf = 0.457;      % femur length, m
+Lt = 0.381;     % tibia length, m
+thetamin = 45 ;  % posterior knee angle for squatting (flexion), deg
+thetamax = 190 ;  % posterior knee angle for standing (extension), deg
+theta = linspace(thetamin,thetamax,10);
+phi = 180 - theta; 
+rPT = 0.04;        % estimated moment arm of Fpt about knee joint, m
+rGR = (Lt .* Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi)));
+al = acosd((Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi))));% moment arm of the ground reaction force
+FGR = 1/2 * (m * 9.81); % N
+
+%% Calculation
+F = zeros(length(theta),5);
+b = zeros(length(theta),5);
+
+for i = 1:length(theta)
+ % Ftfx     Ftfy     Fq        Fpfx     Fpfy 
+A = [1       0  cosd(al(i))      0        0    ; 
+     0       1  sind(al(i))      0        0    ;   
+     0       0  sind(al(i))*rPT  0        0    ;
+     0       0   cosd(90+al(i))  1        0    ;
+     0       0   sind(90+al(i))  0        1   ];
+  
+
+%Right hand side of the equation/ known variables
+b(i,:) = [0 FGR (FGR.*rGR(i)) 0 0 ];
+
+% solving the system of Equations
+F(i,:) = (A \ b(i,:)')';
+end
+
+%% Plot 
+figure
+plot(theta, F(:,3), 'b-', 'LineWidth', 2)
+xlabel('Knee Angle (deg)')
+ylabel('Quadriceps Force F_q (N)')
+title('Quadriceps Force vs. Knee Angle')
+
+%% Output
+fprintf('Fq = %7.1f N\n',F(:,3))
