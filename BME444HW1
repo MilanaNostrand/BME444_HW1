@@ -14,7 +14,7 @@ Lf = 0.457;      % femur length, m
 Lt = 0.381;     % tibia length, m
 thetamin = 45 ;  % posterior knee angle for squatting (flexion), deg
 thetamax = 190 ;  % posterior knee angle for standing (extension), deg
-theta = linspace(thetamin,thetamax,10);
+theta = linspace(thetamin,thetamax,100);
 phi = 180 - theta; 
 rPT = 0.04;        % estimated moment arm of Fpt about knee joint, m
 rGR = (Lt .* Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi)));
@@ -39,14 +39,26 @@ b(i,:) = [0 FGR (FGR.*rGR(i)) 0 0 ];
 
 % solving the system of Equations
 F(i,:) = (A \ b(i,:)')';
+
+Ftfx = F(:,4);
+Ftfy = F(:,5);
+Ftf(i) = sqrt(Ftfy(i).^2 + Ftfx(i).^2);
+
+Fpfx = F(:,1);
+Fpfy = F(:,2);
+Fpf(i) = sqrt(Fpfy(i).^2 + Fpfx(i).^2);
 end
 
 %% Plot 
 figure
-plot(theta, F(:,3), 'b-', 'LineWidth', 2)
+plot(phi, F(:,3),'b-', 'LineWidth', 2)
+hold on 
+plot(phi,Fpf,'c-', 'LineWidth', 2)
+plot(phi,Ftf,'k-', 'LineWidth', 2)
 xlabel('Knee Angle (deg)')
 ylabel('Quadriceps Force F_q (N)')
 title('Quadriceps Force vs. Knee Angle')
 
 %% Output
+
 fprintf('Fq = %7.1f N\n',F(:,3))
