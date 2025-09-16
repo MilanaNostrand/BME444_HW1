@@ -1,5 +1,5 @@
 % 9/12/25
-% BME444HW1.m
+% BME444_HW1.m
 %
 % Solves system of equations to find internal and external forces knee
 % system
@@ -14,10 +14,9 @@ Lf = 0.430;      % femur length, m
 Lt = 0.400;     % tibia length, m
 thetamin = 45 ;  % posterior knee angle for squatting (flexion), deg
 thetamax = 180 ;  % posterior knee angle for standing (extension), deg
-theta = linspace(thetamin,thetamax,100);
-phi = 180 - theta; 
+theta = linspace(thetamin,thetamax,100); % vector from thetamin to thetamax
+phi = 180 - theta; %knee flexion angle (deg)
 rPT = 0.04;        % estimated moment arm of Fpt about knee joint, m
-
 
 
 rGR = (Lt .* Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi)));
@@ -25,18 +24,17 @@ al = acosd((Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi))));% mome
 FBW = (m * 9.81); % N
 FGR = 1/2 * FBW; % N
 
-
 %% Calculation
 F = zeros(length(theta),5);
 b = zeros(length(theta),5);
 
 for i = 1:length(theta)
  % Ftfx     Ftfy     Fq        Fpfx     Fpfy 
-A = [1       0  cosd(al(i)+phi(i))      0        0    ; 
-     0       1  sind(al(i)+phi(i))      0        0    ;   
-     0       0  sind(al(i)+phi(i))*rPT  0        0    ;
-     0       0  (cosd(al(i)+phi(i))+cosd(180+al(i)))   1        0    ; % patella eqn x
-     0       0   (sind(al(i)+phi(i))+sind(180+al(i)))  0        1   ]; % patella eqn y
+A = [1       0  cosd(al(i))      0        0    ; 
+     0       1  sind(al(i))      0        0    ;   
+     0       0  sind(al(i))*rPT  0        0    ;
+     0       0  (cosd(phi(i)+al(i))+cosd(180+al(i)))   1        0    ; % patella eqn x
+     0       0   (sind(phi(i)+al(i))+sind(180+al(i)))  0        1   ]; % patella eqn y
   
 %Right hand side of the equation/ known variables
 b(i,:) = [0 FGR (FGR.*rGR(i)) 0 0 ];
