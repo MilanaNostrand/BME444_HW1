@@ -30,8 +30,8 @@ for i = 1:length(theta)
 A = [1       0  cosd(al(i))      0        0    ; 
      0       1  sind(al(i))      0        0    ;   
      0       0  sind(al(i))*rPT  0        0    ;
-     0       0   cosd(90+al(i))  1        0    ;
-     0       0   sind(90+al(i))  0        1   ];
+     0       0  (cosd(90+al(i))+cosd(180+al(i)))   1        0    ; % patella eqn x
+     0       0   (sind(90+al(i))+sind(180+al(i)))  0        1   ]; % patella eqn y
   
 
 %Right hand side of the equation/ known variables
@@ -49,15 +49,23 @@ Fpfy = F(:,2);
 Fpf(i) = sqrt(Fpfy(i).^2 + Fpfx(i).^2);
 end
 
+%Convert to kN
+F = F./1000;
+Ftfx = Ftfx./1000;
+Ftfy = Ftfy./1000;
+Ftf = Ftf./1000;
+
+Fpfx = Fpfx./1000;
+Fpfy = Fpfy./1000;
+Fpf = Fpfx./1000;
+
 %% Plot 
-figure
-plot(phi, F(:,3),'b-', 'LineWidth', 2)
-hold on 
-plot(phi,Fpf,'c-', 'LineWidth', 2)
-plot(phi,Ftf,'k-', 'LineWidth', 2)
-xlabel('Knee Angle (deg)')
-ylabel('Quadriceps Force F_q (N)')
+figure;
+plot(phi, F(:,3),'b-', phi, Fpf,'c-', phi, Ftf, 'k-', 'LineWidth', 2)
+xlabel('Knee Angle \phi (deg)')
+ylabel('Quadriceps Force F_q (kN)')
 title('Quadriceps Force vs. Knee Angle')
+legend('F_{q}', 'F_{pf}', 'F_{tf}', Location='northeastoutside')
 
 %% Output
 
