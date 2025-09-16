@@ -63,8 +63,8 @@ Fpf = Fpfx./1000;
 figure;
 plot(phi, F(:,3),'b-', phi, Fpf,'c-', phi, Ftf, 'k-', 'LineWidth', 2)
 xlabel('Knee Angle \phi (deg)')
-ylabel('Quadriceps Force F_q (kN)')
-title('Quadriceps Force vs. Knee Angle')
+ylabel('Force (kN)')
+title('Force vs. Knee Angle')
 legend('F_{q}', 'F_{pf}', 'F_{tf}', Location='northeastoutside')
 
 %% Output
