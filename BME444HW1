@@ -19,10 +19,12 @@ phi = 180 - theta;
 rPT = 0.04;        % estimated moment arm of Fpt about knee joint, m
 
 
+
 rGR = (Lt .* Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi)));
 al = acosd((Lf .* sind(phi))./ (sqrt(Lt^2 + Lf^2 + 2.*Lt.*Lf*cosd(phi))));% moment arm of the ground reaction force
 FBW = (m * 9.81); % N
 FGR = 1/2 * FBW; % N
+
 
 %% Calculation
 F = zeros(length(theta),5);
@@ -30,11 +32,11 @@ b = zeros(length(theta),5);
 
 for i = 1:length(theta)
  % Ftfx     Ftfy     Fq        Fpfx     Fpfy 
-A = [1       0  cosd(al(i))      0        0    ; 
-     0       1  sind(al(i))      0        0    ;   
-     0       0  sind(al(i))*rPT  0        0    ;
-     0       0  (cosd(90+al(i))+cosd(180+al(i)))   1        0    ; % patella eqn x
-     0       0   (sind(90+al(i))+sind(180+al(i)))  0        1   ]; % patella eqn y
+A = [1       0  cosd(al(i)+phi(i))      0        0    ; 
+     0       1  sind(al(i)+phi(i))      0        0    ;   
+     0       0  sind(al(i)+phi(i))*rPT  0        0    ;
+     0       0  (cosd(al(i)+phi(i))+cosd(180+al(i)))   1        0    ; % patella eqn x
+     0       0   (sind(al(i)+phi(i))+sind(180+al(i)))  0        1   ]; % patella eqn y
   
 %Right hand side of the equation/ known variables
 b(i,:) = [0 FGR (FGR.*rGR(i)) 0 0 ];
